@@ -8,7 +8,9 @@ const { HttpCode } = require('./src/helpers/constants');
 const { ErrorHandler } = require('./src/helpers/errorHandler');
 
 const { apiLimit, jsonLimit } = require('./src/config/rate-limit.json');
+
 const listsRouter = require('./src/api/lists');
+const itemsRouter = require('./src/api/items');
 const usersRouter = require('./src/api/users');
 
 const app = express();
@@ -36,6 +38,7 @@ app.use(
   }),
 );
 app.use('/api/lists', listsRouter);
+app.use('/api/items', itemsRouter);
 app.use('/api/users', usersRouter);
 
 app.use((req, res) => {
