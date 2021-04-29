@@ -40,16 +40,17 @@ const reg = async (req, res, next) => {
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const token = await serviseAuth.login({ email, password });
+    const { token, name, avatarURL } = await serviseAuth.login({
+      email,
+      password,
+    });
     if (token) {
-      return res.status(HttpCode.OK).json(
-        getSuccesObject(
-          {
-            token,
-          },
-          HttpCode.OK,
-        ),
-      );
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        token,
+        user: { email, name, avatarURL },
+      });
     }
 
     next(
@@ -97,7 +98,11 @@ const current = async (req, res, next) => {
     const token = req.user.token;
     const user = await serviseUser.findByToken(token);
     if (user) {
-      res.status(HttpCode.OK).json(getSuccesObject(user));
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        user,
+      });
     } else {
       return next(
         getErrorObject(HttpCode.UNAUTHORIZED, 'Unauthorized', 'Not authorized'),

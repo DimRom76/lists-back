@@ -1,8 +1,8 @@
-const { HttpCode } = require("../helpers/constants");
+const { HttpCode } = require('../helpers/constants');
 
 function getSuccesObject(data, code = HttpCode.OK) {
   return {
-    status: "succes",
+    status: 'success',
     code,
     data,
   };
@@ -10,8 +10,8 @@ function getSuccesObject(data, code = HttpCode.OK) {
 
 function getErrorObject(
   code = HttpCode.NOT_FOUND,
-  data = "Not found",
-  message = "Not found"
+  data = 'Not found',
+  message = 'Not found',
 ) {
   return {
     status: code,
