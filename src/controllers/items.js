@@ -16,8 +16,12 @@ const getAll = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const list = await itemsServise.create(userId, req.body);
-    res.status(HttpCode.CREATED).json(getSuccesObject(list, HttpCode.CREATED));
+    const item = await itemsServise.create(userId, req.body);
+    res.status(HttpCode.CREATED).json({
+      status: 'success',
+      code: HttpCode.CREATED,
+      item,
+    });
   } catch (e) {
     console.log(e);
     next(e);
@@ -27,13 +31,12 @@ const create = async (req, res, next) => {
 const remove = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const list = await itemsServise.remove(userId, req.params);
-    //TODO удалить в listElements
-    if (list) {
+    const item = await itemsServise.remove(userId, req.params);
+    if (item) {
       res.status(HttpCode.OK).json({
-        status: 'succes',
+        status: 'success',
         code: HttpCode.OK,
-        message: 'list deleted',
+        message: 'item deleted',
       });
     } else {
       return next(getErrorObject());
@@ -46,9 +49,13 @@ const remove = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const list = await itemsServise.update(userId, req.params, req.body);
-    if (list) {
-      res.status(HttpCode.OK).json(getSuccesObject(list));
+    const item = await itemsServise.update(userId, req.params, req.body);
+    if (item) {
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        item,
+      });
     } else {
       return next(getErrorObject());
     }

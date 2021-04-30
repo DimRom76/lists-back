@@ -28,6 +28,16 @@ class ListsService {
     return data;
   }
 
+  async addItem(userId, { listId }, body) {
+    const data = await this.repositories.lists.addItem(userId, listId, body);
+    return data;
+  }
+
+  async deleteItem(userId, { listId }, body) {
+    const data = await this.repositories.lists.deleteItem(userId, listId, body);
+    return data;
+  }
+
   async remove(userId, { listId }) {
     const data = await this.repositories.lists.remove(userId, listId);
     return data;

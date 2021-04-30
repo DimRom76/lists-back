@@ -1,3 +1,4 @@
+const { array } = require('joi');
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const Schema = mongoose.Schema;
@@ -15,6 +16,18 @@ const listsSchema = new Schema(
     owner: {
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'user',
+    },
+    items: {
+      type: [
+        {
+          item: { type: mongoose.SchemaTypes.ObjectId, ref: 'items' },
+          isCompletedItem: {
+            type: Boolean,
+            default: false,
+          },
+        },
+      ],
+      default: [],
     },
   },
   { versionKey: false, timestamps: true },

@@ -18,7 +18,11 @@ const getById = async (req, res, next) => {
     const userId = req.user.id;
     const list = await listServise.getById(userId, req.params);
     if (list) {
-      res.status(HttpCode.OK).json(getSuccesObject(list, HttpCode.OK));
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        list,
+      });
     } else {
       return next(getErrorObject());
     }
@@ -31,7 +35,11 @@ const create = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const list = await listServise.create(userId, req.body);
-    res.status(HttpCode.CREATED).json(getSuccesObject(list, HttpCode.CREATED));
+    res.status(HttpCode.CREATED).json({
+      status: 'success',
+      code: HttpCode.CREATED,
+      list,
+    });
   } catch (e) {
     console.log(e);
     next(e);
@@ -42,10 +50,9 @@ const remove = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const list = await listServise.remove(userId, req.params);
-    //TODO удалить в listElements
     if (list) {
       res.status(HttpCode.OK).json({
-        status: 'succes',
+        status: 'success',
         code: HttpCode.OK,
         message: 'list deleted',
       });
@@ -62,7 +69,47 @@ const update = async (req, res, next) => {
     const userId = req.user.id;
     const list = await listServise.update(userId, req.params, req.body);
     if (list) {
-      res.status(HttpCode.OK).json(getSuccesObject(list));
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        list,
+      });
+    } else {
+      return next(getErrorObject());
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
+const addItem = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const list = await listServise.addItem(userId, req.params, req.body);
+    if (list) {
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.CREATED,
+        list,
+      });
+    } else {
+      return next(getErrorObject());
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
+const deleteItem = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const list = await listServise.deleteItem(userId, req.params, req.body);
+    if (list) {
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        list,
+      });
     } else {
       return next(getErrorObject());
     }
@@ -77,4 +124,6 @@ module.exports = {
   create,
   remove,
   update,
+  addItem,
+  deleteItem,
 };

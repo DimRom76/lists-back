@@ -5,7 +5,7 @@ class ItemsRepository {
     this.model = Items;
   }
 
-  async getAll(userId, { limit = 5, page = 1, sortBy, sortByDesk }) {
+  async getAll(userId, { limit = 50, page = 1, sortBy = 'name', sortByDesk }) {
     const result = await this.model.paginate(
       { owner: userId },
       {
@@ -15,6 +15,7 @@ class ItemsRepository {
           ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
           ...(sortByDesk ? { [`${sortByDesk}`]: -1 } : {}),
         },
+        select: '_id | isCompleted | name | createdAt ',
       },
     );
     return result;
@@ -22,15 +23,14 @@ class ItemsRepository {
 
   async create(userId, body) {
     const result = await this.model.create({ ...body, owner: userId });
-    return result;
+    const { _id, isCompleted, name, createdAt } = result;
+    return { _id, isCompleted, name, createdAt };
   }
 
   async update(userId, id, body) {
-    const result = await this.model.findByIdAndUpdate(
-      { owner: userId, _id: id },
-      { ...body },
-      { new: true },
-    );
+    const result = await this.model
+      .findByIdAndUpdate({ owner: userId, _id: id }, { ...body }, { new: true })
+      .select('_id | isCompleted | name | createdAt ');
     return result;
   }
 

@@ -84,7 +84,11 @@ const update = async (req, res, next) => {
     const id = req.user.id;
     const user = await serviseUser.update(id, req.body);
     if (user) {
-      res.status(HttpCode.OK).json(getSuccesObject(user));
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        user,
+      });
     } else {
       return next(getErrorObject());
     }
