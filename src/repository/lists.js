@@ -34,7 +34,7 @@ class ListsRepository {
     const result = await this.model
       .findOne({ owner: userId, _id: id })
       .select('_id | isCompleted | name | createdAt | items')
-      .populate({ path: 'owner', select: 'email name -_id' });
+      .populate({ path: 'items.item', select: 'name ' });
     return result;
   }
 
@@ -47,16 +47,13 @@ class ListsRepository {
   async update(userId, id, body) {
     const result = await this.model
       .findByIdAndUpdate({ owner: userId, _id: id }, { ...body }, { new: true })
-      .select('_id | isCompleted | name | createdAt | items');
+      .select('_id | isCompleted | name | createdAt | items')
+      .populate({ path: 'items.item', select: 'name ' });
     return result;
   }
 
   async addItem(userId, id, body) {
-    const currentList = await this.model.findById(
-      { owner: userId, _id: id },
-      // { $push: { items: { $each: body.idItem } } },
-      // { new: true },
-    );
+    let currentList = await this.model.findById({ owner: userId, _id: id });
 
     if (currentList) {
       const item = currentList.items.find(el => {
@@ -65,7 +62,9 @@ class ListsRepository {
 
       if (item === undefined) {
         currentList.items.push(body);
-        currentList.save();
+        await currentList.save();
+
+        currentList = await this.getById(userId, id);
       }
     }
 
@@ -73,19 +72,15 @@ class ListsRepository {
   }
 
   async deleteItem(userId, id, body) {
-    const currentList = await this.model.findById(
-      { owner: userId, _id: id },
-      // { $push: { items: { $each: body.idItem } } },
-      // { new: true },
-    );
+    const currentList = await this.getById(userId, id);
 
     if (currentList) {
       const index = currentList.items.findIndex(el => {
-        return el.item.toString() === body.item;
+        return el.item._id.toString() === body.item;
       });
       if (index !== -1) {
         currentList.items.splice(index, 1);
-        currentList.save();
+        await currentList.save();
       }
     }
 
