@@ -40,17 +40,20 @@ const reg = async (req, res, next) => {
 const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const { token, name, avatarURL } = await serviseAuth.login({
+    const user = await serviseAuth.login({
       email,
       password,
     });
-    if (token) {
-      return res.status(HttpCode.OK).json({
-        status: 'success',
-        code: HttpCode.OK,
-        token,
-        user: { email, name, avatarURL },
-      });
+    if (user !== null) {
+      const { token, name, avatarURL } = user;
+      if (token) {
+        return res.status(HttpCode.OK).json({
+          status: 'success',
+          code: HttpCode.OK,
+          token,
+          user: { email, name, avatarURL },
+        });
+      }
     }
 
     next(

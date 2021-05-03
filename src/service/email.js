@@ -1,6 +1,7 @@
 const sgMail = require('@sendgrid/mail');
 const Mailgen = require('mailgen');
 require('dotenv').config();
+// https://dimrom-lists-front.netlify.app/
 
 class EmailService {
   #sender = sgMail;
@@ -24,7 +25,8 @@ class EmailService {
           button: {
             color: '#22BC66', // Optional action button color
             text: 'Confirm your account',
-            link: `${host}api/users/verify/${verifyToken}`,
+            //link: `${host}api/users/verify/${verifyToken}`,
+            link: `${host}users/verify/${verifyToken}`,
           },
         },
         outro:
@@ -36,7 +38,7 @@ class EmailService {
   }
 
   async sendEmail(verifyToken, email, name) {
-    const host = 'http://127.0.0.1:3000/';
+    const host = process.env.LINK_FROM_EMAIL;
     const emailBody = this.#createTemplate(verifyToken, host, name);
     sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
