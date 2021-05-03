@@ -38,6 +38,10 @@ const remove = async (req, res, next) => {
         code: HttpCode.OK,
         message: 'item deleted',
       });
+    } else if (item === undefined) {
+      return next(
+        getErrorObject(HttpCode.CONFLICT, 'Conflict', 'Cannot delete item'),
+      );
     } else {
       return next(getErrorObject());
     }

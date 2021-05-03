@@ -1,8 +1,10 @@
 const Items = require('../schemas/items');
+const Lists = require('../schemas/lists');
 
 class ItemsRepository {
   constructor() {
     this.model = Items;
+    this.modelList = Lists;
   }
 
   async getAll(userId, { limit = 50, page = 1, sortBy = 'name', sortByDesk }) {
@@ -35,10 +37,20 @@ class ItemsRepository {
   }
 
   async remove(userId, id) {
+    const lists = await this.modelList.findOne({
+      owner: userId,
+      'items.item': id,
+    });
+
+    if (lists !== null) {
+      return undefined;
+    }
+
     const result = await this.model.findByIdAndRemove({
       owner: userId,
       _id: id,
     });
+
     return result;
   }
 }

@@ -104,6 +104,7 @@ const deleteItem = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const list = await listServise.deleteItem(userId, req.params, req.body);
+
     if (list) {
       res.status(HttpCode.OK).json({
         status: 'success',
