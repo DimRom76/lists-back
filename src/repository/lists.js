@@ -53,11 +53,11 @@ class ListsRepository {
   }
 
   async addItem(userId, id, body) {
-    let currentList = await this.model.findById({ owner: userId, _id: id });
+    let currentList = await this.getById(userId, id);
 
     if (currentList) {
       const item = currentList.items.find(el => {
-        return el.item.toString() === body.item;
+        return String(el.item._id) === String(body.item);
       });
 
       if (item === undefined) {
