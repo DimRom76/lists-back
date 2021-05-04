@@ -12,11 +12,15 @@ class AuthService {
   async login({ email, password }) {
     const user = await this.repositories.users.findByField({ email });
 
-    const res = await user.validPassword(password).then(result => {
-      return result;
-    });
+    if (user) {
+      const res = await user.validPassword(password).then(result => {
+        return result;
+      });
 
-    if (!user || !res || !user.isVerify) return null;
+      if (!res || !user.isVerify) return null;
+    } else {
+      return null;
+    }
 
     const id = user.id;
     const payload = { id };
