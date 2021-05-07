@@ -82,6 +82,24 @@ const update = async (req, res, next) => {
   }
 };
 
+const checkList = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const list = await listServise.checkList(userId, req.params);
+    if (list) {
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        list,
+      });
+    } else {
+      return next(getErrorObject());
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
 const addItem = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -90,6 +108,24 @@ const addItem = async (req, res, next) => {
       res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.CREATED,
+        list,
+      });
+    } else {
+      return next(getErrorObject());
+    }
+  } catch (e) {
+    next(e);
+  }
+};
+
+const checkItem = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const list = await listServise.checkItem(userId, req.params, req.body);
+    if (list) {
+      res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
         list,
       });
     } else {
@@ -123,8 +159,10 @@ module.exports = {
   getAll,
   getById,
   create,
+  checkList,
   remove,
   update,
   addItem,
+  checkItem,
   deleteItem,
 };

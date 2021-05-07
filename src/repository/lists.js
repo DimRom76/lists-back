@@ -52,6 +52,20 @@ class ListsRepository {
     return result;
   }
 
+  async checkList(userId, id) {
+    const currentList = await this.getById(userId, id);
+
+    if (currentList) {
+      currentList.isCompleted = !currentList.isCompleted;
+      for (let index = 0; index < currentList.items.length; ++index) {
+        currentList.items[index].isCompletedItem = currentList.isCompleted;
+      }
+      await currentList.save();
+    }
+
+    return currentList;
+  }
+
   async addItem(userId, id, body) {
     let currentList = await this.getById(userId, id);
 
@@ -66,6 +80,26 @@ class ListsRepository {
 
         currentList = await this.getById(userId, id);
       }
+    }
+
+    return currentList;
+  }
+
+  async checkItem(userId, id, body) {
+    let currentList = await this.getById(userId, id);
+
+    if (currentList) {
+      const itemIndex = currentList.items.findIndex(el => {
+        return String(el.item._id) === String(body.item);
+      });
+
+      if (itemIndex === -1) {
+        return currentList;
+      }
+      currentList.items[itemIndex].isCompletedItem = !currentList.items[
+        itemIndex
+      ].isCompletedItem;
+      await currentList.save();
     }
 
     return currentList;

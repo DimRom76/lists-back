@@ -28,8 +28,18 @@ class ListsService {
     return data;
   }
 
+  async checkList(userId, { listId }) {
+    const data = await this.repositories.lists.checkList(userId, listId);
+    return data;
+  }
+
   async addItem(userId, { listId }, body) {
     const data = await this.repositories.lists.addItem(userId, listId, body);
+    return data;
+  }
+
+  async checkItem(userId, { listId }, body) {
+    const data = await this.repositories.lists.checkItem(userId, listId, body);
     return data;
   }
 
