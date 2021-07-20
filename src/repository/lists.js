@@ -11,7 +11,7 @@ class ListsRepository {
 
   async getAll(
     userId,
-    { limit = 50, page = 1, sortBy = 'name', sortByDesk, filter, completed },
+    { limit = 50, page = 1, sortBy = 'name', sortByDesk, filter, completed }
   ) {
     const result = await this.model.paginate(
       { owner: userId, ...(completed ? { completed } : {}) },
@@ -20,12 +20,12 @@ class ListsRepository {
         page,
         sort: {
           ...(sortBy ? { [`${sortBy}`]: 1 } : {}),
-          ...(sortByDesk ? { [`${sortByDesk}`]: -1 } : {}),
+          ...(sortByDesk ? { [`${sortByDesk}`]: -1 } : {})
         },
         select: '_id | isCompleted | name | createdAt | items',
         //select: filter ? filter.split('|').join(' ') : '',
-        populate: { path: 'items.item', select: 'name' },
-      },
+        populate: { path: 'items.item', select: 'name' }
+      }
     );
     return result;
   }
@@ -67,6 +67,36 @@ class ListsRepository {
   }
 
   async addItem(userId, id, body) {
+    // const result = await this.model
+    //   .findOneAndUpdate(
+    //     { owner: userId, _id: id, 'items.item': { $ne: body.item } },
+    //     { $push: { items: body } },
+    //     { new: true }
+    //   )
+    //   .select('_id | isCompleted | name | createdAt | items')
+    //   .populate({ path: 'items.item', select: 'name ' });
+
+    // // function (err, setdocs) {
+
+    // //   //if there is no match then push a new subdocument
+    // //   if (setdocs == null) {
+    // //     User.findByIdAndUpdate(req.user._id, fieldsToPush, function (err, pushdocs) {
+    // //      //...
+    // //     });
+    // //   }
+    // //   else {
+    // //     //....
+    // //   }
+    // // }
+
+    // return result;
+
+    // let currentList = await this.findByIdAndUpdate({
+    //   owner: userId,
+    //   _id: id,
+    //   items: { item: { $ne: id } }
+    // });
+
     let currentList = await this.getById(userId, id);
 
     if (currentList) {
@@ -90,7 +120,7 @@ class ListsRepository {
 
     if (currentList) {
       const itemIndex = currentList.items.findIndex(el => {
-        return String(el.item._id) === String(body.item);
+        return String(el._id) === String(body._id);
       });
 
       if (itemIndex === -1) {
@@ -106,11 +136,17 @@ class ListsRepository {
   }
 
   async deleteItem(userId, id, body) {
-    const currentList = await this.getById(userId, id);
+    // const result = await this.model.findByIdAndRemove({
+    //   owner: userId,
+    //   _id: id,
+    //   'items._id': body._id
+    // });
 
+    const currentList = await this.getById(userId, id);
+    console.log(body);
     if (currentList) {
       const index = currentList.items.findIndex(el => {
-        return el.item._id.toString() === body.item;
+        return el._id.toString() === body._id;
       });
       if (index !== -1) {
         currentList.items.splice(index, 1);
@@ -124,7 +160,7 @@ class ListsRepository {
   async remove(userId, id) {
     const result = await this.model.findByIdAndRemove({
       owner: userId,
-      _id: id,
+      _id: id
     });
     return result;
   }

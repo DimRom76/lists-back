@@ -7,30 +7,27 @@ const listsSchema = new Schema(
   {
     name: {
       type: String,
-      required: [true, 'Set name for lists'],
+      required: [true, 'Set name for lists']
     },
     isCompleted: {
       type: Boolean,
-      default: false,
+      default: false
     },
     owner: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'user',
+      ref: 'user'
     },
-    items: {
-      type: [
-        {
-          item: { type: mongoose.SchemaTypes.ObjectId, ref: 'items' },
-          isCompletedItem: {
-            type: Boolean,
-            default: false,
-          },
-        },
-      ],
-      default: [],
-    },
+    items: [
+      {
+        item: { type: mongoose.SchemaTypes.ObjectId, ref: 'items' },
+        isCompletedItem: {
+          type: Boolean,
+          default: false
+        }
+      }
+    ]
   },
-  { versionKey: false, timestamps: true },
+  { versionKey: false, timestamps: true }
 );
 
 listsSchema.plugin(mongoosePaginate);
